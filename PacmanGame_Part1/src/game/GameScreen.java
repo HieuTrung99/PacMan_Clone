@@ -2,8 +2,11 @@ package game;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JPanel;
+
 
 public class GameScreen extends JPanel {
 
@@ -14,6 +17,8 @@ public class GameScreen extends JPanel {
 	private Game game;
 
 	public GameScreen() {
+		addKeyListener(new Keyboard());
+		setFocusable(true);
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		Util.loadAllIamge();
 		game = new Game();
@@ -42,10 +47,11 @@ public class GameScreen extends JPanel {
 
 		@Override
 		public void run() {
+
 			long desiredFrameRateTime = 1000 / 30;
 			long currentTime = System.currentTimeMillis();
 			long lastTime = currentTime - desiredFrameRateTime;
-			long unprocessedTime = 0;
+			long unprocessedTime = 1;
 			boolean needsRender = false;
 			while (running) {
 				currentTime = System.currentTimeMillis();

@@ -1,9 +1,8 @@
 package character;
 
-import java.awt.Frame;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,20 +12,20 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-public class Pacman extends Frame implements KeyListener {
+import game.Keyboard;
+
+public class Pacman {
 
 	BufferedImage packman;
 	int frame;
 	int column, row;
 	int reqDir, curDir;
-	final int STEP = 1;
+	final int STEP = 2;
 	int columns, rows;
-
 	ArrayList<String> lines = new ArrayList<String>();
 
 	public Pacman() {
-		addKeyListener(this);
-		try {
+		try { 
 			Scanner s = new Scanner(new File("data.txt"));
 			int r = 0;
 
@@ -56,88 +55,90 @@ public class Pacman extends Frame implements KeyListener {
 		}
 	}
 
-	public void draw(Graphics2D g) {
-		for (int r = 0; r < rows; r++) {
-			for (int c = 0; c < columns; c++) {
-				if (charAt(r, c) != '0') {
-					g.fillRect(c * 2 - 14, r * 2 - 14, 28, 28);
-				}
-			}
+	
+
+	public void updatePlaying() {
+		
+		if (Keyboard.keys[KeyEvent.VK_LEFT]) {
+			
+			reqDir = KeyEvent.VK_LEFT;
 		}
-		g.drawImage(packman.getSubimage((frame / 2) * 30, (curDir - 37) * 30, 28, 28), column * 2 - 14,
-				row * 2 - 14, null);
+		 if (Keyboard.keys[KeyEvent.VK_RIGHT]) {
+			reqDir = KeyEvent.VK_RIGHT;
+	
+		}
+		 if (Keyboard.keys[KeyEvent.VK_DOWN]) {
+			
+			reqDir = KeyEvent.VK_DOWN;
+		}
+		 if (Keyboard.keys[KeyEvent.VK_UP]) {
+			reqDir = KeyEvent.VK_UP;
+		}
 	}
 
-	public void move() {
+	public void update() {
+		updatePlaying();
 		frame++;
 		if (frame > 5) {
 			frame = 0;
 		}
-
-		if (update(reqDir) == SUCCESS) {
+		if (move(reqDir) == SUCCESS) {
 			curDir = reqDir;
+		
 		} else {
-			update(curDir);
+			move(curDir);
 		}
 	}
 
 	static final int SUCCESS = 1, FAIL = 0;
 
-	private int update(int reqDir) {
-		// current position of packman is (row,column)
+	private int move(int reqDir) {
+		
 		switch (reqDir) {
 		case KeyEvent.VK_LEFT: // 37
-			if (column > 0 && charAt(row, column - 1) != '0') {
+			if (column > 0 && charAt(row, column-1) != '0') {
 				column -= 1;
 				return SUCCESS;
 			}
 			break;
-		case KeyEvent.VK_UP: // 38
-			if (row > 0 && charAt(row - 1, column) != '0') {
+		case KeyEvent.VK_UP:   // 38
+			if (row > 0 && charAt(row-1, column) != '0') {
 				row -= 1;
 				return SUCCESS;
 			}
 			break;
 		case KeyEvent.VK_RIGHT: // 39
-			if (column < columns - 1 && charAt(row, column + 1) != '0') {
+			if (column < columns-1 && charAt(row, column+1) != '0') {
 				column += 1;
 				return SUCCESS;
 			}
 			break;
-		case KeyEvent.VK_DOWN: // 40
-			if (row < rows - 1 && charAt(row + 1, column) != '0') {
+		case KeyEvent.VK_DOWN:  // 40
+			if (row < rows-1 && charAt(row+1, column) != '0') {
 				row += 1;
-
 				return SUCCESS;
 			}
 			break;
 		}
 		return FAIL;
+		
 	}
 
 	private char charAt(int row, int column) {
 		return lines.get(row).charAt(column);
 	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int key = e.getKeyCode();
-		if (37 <= key && key <= 40) {
-			reqDir = key;
+	
+	public void draw(Graphics2D g) {
+		for (int r = 0; r < rows; r++) {
+			for (int c = 0; c < columns; c++) {
+				if (charAt(r, c) != '0') {
+					g.fillRect(c * 2 - 14, r * 2 - 14, 28, 28);
+					g.setColor(Color.white);
+				}
+			}
 		}
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		g.drawImage(packman.getSubimage((frame / 2) * 30, (curDir - 37) * 30, 28, 28), column * STEP - 14, row * STEP - 14,
+				null);
 	}
 
 }

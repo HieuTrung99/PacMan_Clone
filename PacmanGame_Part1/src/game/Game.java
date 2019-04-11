@@ -18,7 +18,7 @@ public class Game {
 	}
 
 	public void update() {
-		pacman.move();
+		pacman.update();
 	}
 
 	public void draw(Graphics2D g) {
